@@ -1,6 +1,14 @@
 {
+  "env": {
+    "browser": true,
+    "node": true,
+  },
   "parser": "babel-eslint",
-  "plugins": [
-    "cycle"
-  ]
+  "rules": {
+    "space-after-keywords": "off",
+    "space-return-throw-case": "off",
+    "keyword-spacing": "error"
+  },
+  "extends": "eslint-config-cycle",
+  "plugins": ["cycle"]
 }
