@@ -1,49 +1,44 @@
-{
-  "name": "cyclestarter",
-  "version": "1.0.0",
-  "description": "webpack + cyclejs + mostjs ",
-  "main": "index.js",
-  "scripts": {
-    "rebuild-deps": "rimraf node_modules && npm i",
-    "start": "webpack-dev-server --env.dev --content-base dist",
-    "clean-dist": "rimraf dist",
-    "clean-and-copy": "npm run clean-dist && mkdir dist",
-    "prestart": "npm run clean-and-copy",
-    "prebuild": "npm run clean-and-copy",
-    "validate-webpack:dev": "npm run api && webpack-validator webpack.config.babel.js --env.dev",
-    "build": "webpack --env.dev",
-    "api": "cd api && npm start",
-    "lint": "eslint src"
-  },
-  "keywords": [
-    "cyclejs",
-    "mostjs",
-    "reactive programming",
-    "functional programming"
-  ],
-  "author": "Alberto Scorrano",
-  "license": "ISC",
-  "devDependencies": {
-    "babel-core": "^6.11.4",
-    "babel-eslint": "^6.1.2",
-    "babel-loader": "^6.2.4",
-    "babel-preset-es2015": "^6.9.0",
-    "eslint": "^3.1.1",
-    "eslint-config-cycle": "^3.2.0",
-    "eslint-loader": "^1.4.1",
-    "eslint-plugin-cycle": "^1.0.2",
-    "extract-text-webpack-plugin": "^1.0.1",
-    "html-webpack-plugin": "^2.22.0",
-    "rimraf": "^2.5.3",
-    "webpack": "2.1.0-beta.20",
-    "webpack-dev-server": "^1.14.1",
-    "webpack-validator": "^2.2.3"
-  },
-  "dependencies": {
-    "@cycle/dom": "^11.0.1",
-    "@cycle/isolate": "^1.4.0",
-    "@cycle/most-run": "^3.0.1",
-    "most": "^1.0.0",
-    "xstream": "^5.3.2"
+import {resolve} from 'path'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+
+export default (env) => {
+  return {
+    entry: `./app.js`,
+    output: {
+      filename: `bundle.js`,
+      path: resolve(__dirname, `dist`),
+      pathinfo: !env.prod,
+    },
+    context: resolve(__dirname, `src`),
+    devtool: env.prod ? `source-map` : `eval`,
+    bail: env.prod,
+    module: {
+      preLoaders: [
+        {
+          test: /\.js?$/,
+          loader: `eslint`,
+          exclude: /node_modules/,
+        },
+      ],
+      loaders: [
+        {
+          test: /\.js$/,
+          loader: `babel`,
+          exclude: /node_modules/,
+        },
+      ],
+    },
+    eslint: {
+      failOnWarning: false,
+      failOnError: true,
+    },
+    plugins: [
+      new HtmlWebpackPlugin({
+        title: `Cycle starter`,
+        inject: true,
+        template: `templates/main.html`,
+        minify: {decodeEntities: true},
+      }),
+    ],
   }
 }
